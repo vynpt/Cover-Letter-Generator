@@ -12,7 +12,7 @@ st.title('Cover Letter Generator')
 #st.markdown("This app generates a cover letter based on your resume. Please upload your resume and fill in the required information. The app will generate a cover letter for you. You can also download the cover letter as a .docx file.")
 st.markdown("This app generates a cover letter based on your resume. The app will generate a cover letter for you. You can also download the cover letter as a .docx file.")
 
-API_KEY = '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'
+API_KEY = ''
 
 template = """"You are a generator model that writes a cover letter based on a resume. This is the resume:\n{context}\n\n
 I want you to produce a cover letter that is professional but concise with 2 paragraphs. The first paragraph summarizes the skills and tech stack of this candidate. The second paragraph describes a most outstanding project or experience.
