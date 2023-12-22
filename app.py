@@ -4,7 +4,7 @@ import spacy
 import pandas as pd
 import re 
 
-from gpt2_finetune import *
+from gpt2_generate import *
 
 # Load our trained NER model
 from NER import *
