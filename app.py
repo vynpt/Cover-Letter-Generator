@@ -5,6 +5,7 @@ import pandas as pd
 import re 
 
 from gpt2_generate import *
+# from llama2_generate import *
 
 # Load our trained NER model
 from NER import *
@@ -30,19 +31,6 @@ selected_job_title = st.selectbox("Select a job title:", filtered_jobs_df["title
 selected_job_df = filtered_jobs_df[filtered_jobs_df['title'] == selected_job_title]
 selected_job = selected_job_df.iloc[0] if not selected_job_df.empty else None
 
-# selected_job_title = st.selectbox("Select a job title:", jobs["title"].astype(str).unique())
-# selected_job_df = jobs[jobs['title'] == selected_job_title]
-# selected_job = selected_job_df.iloc[0] if not selected_job_df.empty else None
-
-# Placeholder for the uploaded file path
-# def extract_text_from_first_page(pdf_path):
-#     # Open the PDF file
-#     with fitz.open(pdf_path) as pdf:
-#         text = ""
-#         # Extract text from the first page
-#         page = pdf[0]
-#         text = page.get_text()
-#     return text
 
 # Create a file uploader widget
 st.write("###")
@@ -110,16 +98,25 @@ def common_skill(resume_skills, job_skills):
 skill_resume = extract_skill(text_uploaded)
 skill_job = extract_skill(selected_job['description'])  
 
-# Generate text with the fine-tuned model
+# Generate text with the gpt2 fine-tuned model
 list_skill = ' '.join(common_skill(skill_resume, skill_job))
-prompt_text = f"Dear Hiring Managers,\n\n I am writing to express my interest in the {selected_job['title']} position. My skills in {list_skill} align well with this role and make me an excellent candidate for this role."
+prompt_text1 = f"Dear Hiring Managers,\n\n I am writing to express my interest in the {selected_job['title']} position. My skills in {list_skill} align well with this role and make me an excellent candidate."
 # prompt_text = f"Create a cover letter for Data Science job"
-generated = generate_text(prompt_text)
+generated = generate_text(prompt_text1)
+
+# Generate text with the gpt2 fine-tuned model
+prompt_text2 = f"Dear Hiring Managers,\n\n I am writing to express my interest in the {selected_job['title']} position. My skills in {list_skill} align well with this role and make me an excellent candidate."
+# prompt_text = f"Create a cover letter for Data Science job"
+generated2 = regular_gpt2(prompt_text2)
+
+# Generate text using the pipeline of llama2 model
+# generated_llama2 = generate_cv(list_skill, selected_job['title'], selected_job['description'])
+
 
 body_container = st.container()
 with body_container:
     submit_button = st.button(label='Generate Cover Letter')
-    col1, col2, col3 = st.columns([1, 1.5, 1.5])
+    col1, col2, col3, col4 = st.columns([0.75, 1.25, 1.5, 1.5])
 
     if submit_button:
         
@@ -140,5 +137,30 @@ with body_container:
             st.write(f"Job Posting: {selected_job['job_posting_url']}")
                 
         with col3:
-            st.subheader("Generated Cover Letter")
+            st.subheader("Generated Cover Letter (GPT-2 finetuned)")
             st.write(generated)
+            st.write("Perplexity: ", compute_perplexity())
+            
+        # with col4: 
+        #     st.subheader("Generated Cover Letter (GPT-2 regular)")
+        #     st.write(generated2)
+            
+        with col4: 
+            st.subheader("Generated Cover Letter (LLAMA-2)")
+        #     # st.write(generated_llama2)
+            
+        #     st.write("""Dear Hiring Manager, \n\n I am writing to apply for the position of Data Scientist at WEX, as advertised on [website]. With over 3 years of experience in statistical modeling and quantitative analysis, I am confident that my skills and expertise align with the requirements of this role. 
+        #                 As a certified data scientist with a Bachelor's degree in Data Science and a strong background in machine learning, statistics, and data visualization, I possess a unique combination of technical and domain expertise that makes me an ideal candidate for this position. My experience includes \n\n
+                        
+        #                 * Experience in Python programming, including data analysis and machine learning tasks \n
+        #                 * Experience in data science, including data visualization and tableau \n
+        #                 * Strong understanding of graduate-level multivariate statistical techniques and sampling methods, including but not limited to multivariate regression, ANOVA, factor analysis, cluster analysis, and principal components analysis \n\n
+        #                 * Proficient in SQL and excel, with the ability to effectively utilize advanced functions and features \n
+        #                 * Experience in mentoring and developing junior analysts roven track record of collaborating closely with cross-functional teams to strategize, plan, and analyze A/B tests \n
+        #                 * Strong communication skills, with the ability to translate, communicate, and present results and recommendations to a non-technical audience \n
+                        
+        #                 In my current role as a Data Science Consultant at Datamites, I have been responsible for analyzing and processing complex data sets using advanced querying, visualization, and analytics tools. I have worked extensively with Python, R, and SQL, 
+        #                 and have experience in machine learning tools and statistical techniques. I have also demonstrated a strong ability to work independently and collaboratively, and to effectively communicate technical findings to both technical and non-technical stakeholders.
+        #                 As a strong advocator of the augmented era, I am passionate about bringing business concepts in areas of machine learning, AI, and robotics to real-life solutions. 
+        #                 I believe that data science can be used to drive business growth and improve operational efficiency, and I am excited about the opportunity to join NRG and contribute my skills and expertise to the success of the company.
+        #                 In particular, I am drawn to WEX's focus on promoting customized offerings and leveraging data to optimize marketing efforts.""")
